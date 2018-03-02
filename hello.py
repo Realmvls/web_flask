@@ -11,6 +11,10 @@ from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_script import Shell
 from flask_migrate import Migrate, MigrateCommand
+from mail_info import USERNAME, PASSWORD, FLASKY_ADMIN
+from flask_mail import Mail
+from flask_mail import Message
+from threading import Thread
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 # 生成一个表单类
@@ -20,19 +24,37 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class NameForm(Form):
     name = StringField('What is your name?')
     submit = SubmitField('Submit')
-
 # 定义收藏夹的图片失败
+
 
 app = Flask(__name__)
 manager = Manager(app)
-app.config['SECRET_KEY'] = "hard to guess string"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ os.path.join(basedir, 'data.sqlite')
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+mail = Mail(app)
+# 迁移数据库flask—migrate
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
+
+# 配置sqlite数据库
+app.config['SECRET_KEY'] = "hard to guess string"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+# 配置邮箱客户端
+app.config['MAIL_SERVER'] = 'smtp.163.com'
+app.config['MAIL_PORT'] = '465'
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = USERNAME
+app.config['MAIL_PASSWORD'] = PASSWORD
+app.config['FLASKY_MAIL_SUBJECT_PREFIX'] = '[Flasky]'
+# 发件人地址
+app.config['FLASKY_MAIL_SENDER'] = 'Flasky Admin<942814208@163.com>'
+app.config['FLASKY_ADMIN'] = FLASKY_ADMIN
 
 # roles表
+
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +65,8 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 # user表
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -53,17 +77,33 @@ class User(db.Model):
         return '<User %r>' % self.username
 
 # 让Flask_Script 的shell命令自动导入特定对象
+
+
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
+
+
 manager.add_command("shell", Shell(make_context=make_shell_context))
 # make_shell_context函数注册了程序，数据库实例以及模型，因此这些对象可直接导入shell
 
-
-# 迁移数据库flask—migrate
-migrate = Migrate(app, db)
-manager.add_command('db', MigrateCommand)
+# 发送email函数
 
 
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+# 异步分发email函数
+
+
+def send_email(to, subject, template, **kwargs):
+    msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
+                  sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
+    msg.body = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
 
 
 # 首页路由第一版
@@ -92,29 +132,36 @@ def index():
     form = NameForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.name.data).first()
-        print('user====',user)
+        print('user====', user)
         print(type(user))
         if user is None:
             print('不存在')
             user = User(username=form.name.data)
+            flash('Looks like you have changed your name!!!')
             db.session.add(user)
+            db.session.commit()
             session['known'] = False
+            if app.config['FLASKY_ADMIN']:
+                send_email(app.config['FLASKY_ADMIN'], '新用户', 'mail/new_user', user=user)
         else:
             print('存在')
             session['known'] = True
         session['name'] = form.name.data
         form.name.data = ''
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'), known=session.get('known', False), current_time=datetime.utcnow())
+    return render_template('index.html', form=form, name=session.get('name'),
+                           known=session.get('known', False), current_time=datetime.utcnow())
 
 
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=name)
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.errorhandler(500)
 def internal_server_error(e):
@@ -185,7 +232,6 @@ def internal_server_error(e):
 #     if not user:
 #         abort(404)
 #     return '<h4>hello,%s</h4>' % user.name
-
 
 if __name__ == '__main__':
     app.debug = True

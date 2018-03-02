@@ -1,14 +1,5 @@
 {% extends "bootstrap/base.html" %}
 
-{% block head %}
-{{ super() }}
-<h4> This is a picture </h4>
-<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
-    type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}"
-    type="image/x-icon">
-{% endblock %}
-
 {% block title %}Flasky{% endblock %}
 
 {% block navbar %}
@@ -43,4 +34,10 @@
     {% endfor %}
     {% block page_content %}{% endblock %}
 </div>
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
 {% endblock %}
