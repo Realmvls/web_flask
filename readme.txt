@@ -1,0 +1,7 @@
+app包中保存Flask程序
+migrations文件夹包含数据库迁移脚本
+tests包中编写单元测试
+venv文件夹包含python虚拟环境
+requirements.txt 列出所有依赖包
+config.py 存储配置
+manage.py 用于启动程序以及其他任务
