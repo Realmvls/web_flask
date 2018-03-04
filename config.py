@@ -36,6 +36,7 @@ class DevelopmentConfig(Config):
 	MAIL_PASSWORD = PASSWORD
 	# 配置开发用的sqlite数据库
 	# os.path.join 将多个路径组合后返回
+
 	SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 class TestingConfig(Config):

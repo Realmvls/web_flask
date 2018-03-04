@@ -9,6 +9,9 @@ from flask_login import UserMixin
 # 如果能找到用户，这个函数必须返回用户对象，否则返回None
 from . import login_manager
 
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import current_app
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -40,6 +43,8 @@ class User(UserMixin, db.Model):
     test_column = db.Column(db.Integer, unique=True, index=True)
 
     password_hash = db.Column(db.String(128))
+    # 注册时发的确认邮件是否被点击的字段
+    confirmed = db.Column(db.Boolean, default=False)
 
     @property
     def password(self):
@@ -52,6 +57,21 @@ class User(UserMixin, db.Model):
     def verify_password(self,password):
         return check_password_hash(self.password_hash, password)
 #  __repr()__ 方法，返回一个具有可读性的字符串表示模型，可在调试和测试时使用。
+
+    def generate_confirmation_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm':self.id})
+
+    def confirm(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        return True
+
 
     def __repr__(self):
         return '<User %r>' % self.username
