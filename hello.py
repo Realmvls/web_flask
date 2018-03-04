@@ -2,72 +2,20 @@
 # -*- coding: utf-8 -*-
 
 
-from flask_wtf import Form
-from wtforms import StringField, SubmitField
+# 代码量比较少的时候可以都下在一个hello文件中
 
 
 
-from flask_mail import Message
-from threading import Thread
-
-
-# 生成一个表单类
-# StringField为属性为type=text 的input元素
-# SubmitField为属性为type=submit的input元素
-# validators=[Required()] 这种写法已经不能用了
-class NameForm(Form):
-    name = StringField('What is your name?')
-    submit = SubmitField('Submit')
 
 
 # make_shell_context函数注册了程序，数据库实例以及模型，因此这些对象可直接导入shell
 
-# 发送email函数
 
-
-def send_async_email(app, msg):
-    with app.app_context():
-        mail.send(msg)
-
-# 异步分发email函数
-
-
-def send_email(to, subject, template, **kwargs):
-    msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
-                  sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
-    msg.body = render_template(template + '.txt', **kwargs)
-    msg.html = render_template(template + '.html', **kwargs)
-    thr = Thread(target=send_async_email, args=[app, msg])
-    thr.start()
-    return thr
-
-
-# 首页路由第一版
-# @app.route('/', methods=['GET','POST'])
-# def index():
-#     name = None
-#     form = NameForm()
-#     if form.validate_on_submit():
-#         old_name = session.get('name')
-#         if old_name is not None and old_name != form.name.data:
-#             flash('Looks like you have changed your name!')
-#         session['name'] = form.name.data
-#         # redirect函数的参数是重定向的url
-#         return redirect(url_for('index'))
-#         # print('用户已经提交数据')
-#         # name = form.name.data
-#         # print('name======', name)
-#         # form.name.data=''
-#         # print(form.name)
-#     return render_template('index.html', form=form, name=session.get('name'), current_time=datetime.utcnow())
-
-
-
-
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', name=name)
-
+#
+# @app.route('/user/<name>')
+# def user(name):
+#     return render_template('user.html', name=name)
+#
 
 
 

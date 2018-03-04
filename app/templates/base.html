@@ -2,6 +2,13 @@
 
 {% block title %}Flasky{% endblock %}
 
+<ul class="nav navbar-nav navbar-right">
+    {% if current_user.is_authenticated() %}
+    <li><a href="{{ url_for('auth.logout')}}">Sign Out</a></li>
+    <li><a href="{{ url_for('auth.login')}}">Sign In</a></li>
+    {% endif %}
+</ul>
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
