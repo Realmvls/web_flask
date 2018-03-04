@@ -3,6 +3,17 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+
+# 加载用户的回掉函数，使用指定的标识符加载用户
+# 加载用户的回掉函数接受以Unicode字符串形式表示的用户标识符。
+# 如果能找到用户，这个函数必须返回用户对象，否则返回None
+from . import login_manager
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 # roles表
 
 
@@ -26,6 +37,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    test_column = db.Column(db.Integer, unique=True, index=True)
 
     password_hash = db.Column(db.String(128))
 

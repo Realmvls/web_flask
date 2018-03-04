@@ -14,7 +14,7 @@ from .forms import LoginForm
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
 	# 这个试图函数创建了一个LoginForm对象
-	form = LoginForm
+	form = LoginForm()
 	if form.validate_on_submit():
 		user = User.query.filter_by(email=form.email.data).first()
 		# verify_password()函数验证密码是否正确

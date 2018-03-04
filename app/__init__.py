@@ -17,13 +17,6 @@ login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
-# 加载用户的回掉函数，使用指定的标识符加载用户
-# 加载用户的回掉函数接受以Unicode字符串形式表示的用户标识符。
-# 如果能找到用户，这个函数必须返回用户对象，否则返回None
-@login_manager.user_loader
-def load_user(user_id):
-	return User.query.get(int(user_id))
-
 
 def create_app(config_name):
 	"""
