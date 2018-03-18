@@ -13,9 +13,9 @@ class Config:
 	SECRET_KEY = os.environ.get('SECRET_KEY') or "hard to guess string"
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 	# 邮箱相关配置
-	FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
+	FLASKY_MAIL_SUBJECT_PREFIX = '[个人博客]'
 	# 发件人地址
-	FLASKY_MAIL_SENDER = 'Flasky Admin<942814208@163.com>'
+	FLASKY_MAIL_SENDER = '阿甲<942814208@163.com>'
 	FLASKY_ADMIN = FLASKY_ADMIN
 
 	@staticmethod

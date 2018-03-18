@@ -1,0 +1,11 @@
+您好 {{ user.username }},
+
+欢迎来到 Flasky
+
+如需确认账户请点击下面的链接:
+
+{{ url_for('auth.confirm', token=token, _external=True)}}
+
+by:Jochen
+
+注意: 请勿回复此邮件
