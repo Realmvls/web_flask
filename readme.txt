@@ -5,3 +5,4 @@ venv文件夹包含python虚拟环境
 requirements.txt 列出所有依赖包
 config.py 存储配置
 manage.py 用于启动程序以及其他任务
+uwsgiconfig.ini 用于存储uwsgi的相关配置信息
