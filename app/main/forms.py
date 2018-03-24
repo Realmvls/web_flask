@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 
 # 生成一个表单类
@@ -11,6 +11,6 @@ from wtforms import StringField, SubmitField
 # validators=[Required()] 这种写法已经不能用了
 
 
-class NameForm(Form):
+class NameForm(FlaskForm):
     name = StringField('What is your name?')
     submit = SubmitField('Submit')

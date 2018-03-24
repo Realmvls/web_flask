@@ -8,6 +8,7 @@ from .import auth
 from ..models import User
 from .forms import LoginForm
 from .forms import RegistrationForm
+from .forms import ChangePasswordForm
 from .. import db
 from ..email import send_email
 # 确认用户的账户
@@ -104,3 +105,17 @@ def resend_confirmation():
 	return redirect(url_for('main.index'))
 
 
+@auth.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+	form = ChangePasswordForm()
+	if form.validate_on_submit():
+		if current_user.verify_password(form.old_password.data):
+			current_user.password = form.password.data
+			db.session.add(current_user)
+			db.session.commit()
+			flash('Your password has been updated')
+			return redirect(url_for('main.index'))
+		else:
+			flash('Invalid password')
+	return render_template('auth/change_password.html', form=form)

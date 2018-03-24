@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import Flask, render_template, session, redirect, url_for, flash, current_app
-
 from . import main
 from . forms import NameForm
 from .. import db

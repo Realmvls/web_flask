@@ -34,6 +34,8 @@ def create_app(config_name):
 	mail.init_app(app)
 	moment.init_app(app)
 	db.init_app(app)
+	# Flask-login 在程序工厂函数中初始化
+	login_manager.init_app(app)
 
 	# 蓝本在工厂函数create_app()中注册到程序上
 	from .main import main as main_blueprint
@@ -45,8 +47,5 @@ def create_app(config_name):
 	from .auth import auth as auth_blueprint
 	app.register_blueprint(auth_blueprint, url_prefix='/auth')
 	# url_prefix参数：使用这个参数注册后蓝本中定义的所有路由都会加上指定前缀
-
-	# Flask-login 在程序工厂函数中初始化
-	login_manager.init_app(app)
 
 	return app
