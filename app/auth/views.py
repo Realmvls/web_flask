@@ -11,6 +11,7 @@ from .forms import RegistrationForm
 from .forms import ChangePasswordForm
 from .forms import PasswordResetRequestForm
 from .forms import PasswordResetForm
+from .forms import ChangeEmailForm
 from .. import db
 from ..email import send_email
 # 确认用户的账户
@@ -158,4 +159,33 @@ def password_reset(token):
 			return redirect(url_for('main.index'))
 	return render_template('auth/reset_password.html', form=form)
 
+
+@auth.route('/change_email', methods=['GET', 'POST'])
+@login_required
+def change_email_request():
+	form = ChangeEmailForm()
+	if form.validate_on_submit():
+		if current_user.verify_password(form.password.data):
+			new_email = form.email.data
+			token = current_user.generate_email_change_token(new_email)
+			send_email(new_email, 'Confirm your email address',
+			            'auth/email/change_email',
+			            user=current_user, token=token)
+			flash('An email with instructions to confirm your new email address has been sent to you.')
+			return redirect(url_for('main.index'))
+		else:
+			flash('Invalid email or password.')
+	return render_template("auth/change_email.html", form=form)
+
+
+@auth.route('/change_email/<token>')
+@login_required
+def change_email(token):
+	print('token的布尔值=====',current_user.change_email(token))
+	if current_user.change_email(token):
+		db.session.commit()
+		flash('Your email address has been updated.')
+	else:
+		flash('Invalid request.')
+	return redirect(url_for('main.index'))
 

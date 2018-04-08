@@ -2,6 +2,12 @@
 
 {% block title %}Flasky{% endblock %}
 
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+{% endblock %}
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -25,6 +31,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{url_for('auth.change_password') }}">Change Password</a></li>
+                        <li><a href="{{ url_for('auth.change_email_request') }}">Change Email</a></li>
                         <li><a href="{{url_for('auth.logout')}}">Log Out</a></li>
                     </ul>
                 </li>
@@ -49,8 +56,7 @@
 </div>
 {% endblock %}
 
-{% block head %}
+{% block scripts %}
 {{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+{{ moment.include_moment() }}
 {% endblock %}
