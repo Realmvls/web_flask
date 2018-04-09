@@ -95,7 +95,7 @@ class User(UserMixin, db.Model):
     def generate_email_change_token(self, new_email, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps(
-            {'change_email': self.id, 'new_email':new_email}
+            {'change_email': self.id, 'new_email': new_email}
         ).decode('utf-8')
 
     def change_email(self, token):
@@ -118,3 +118,9 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+# 这个函数目前还没有用到
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))

@@ -168,9 +168,7 @@ def change_email_request():
 		if current_user.verify_password(form.password.data):
 			new_email = form.email.data
 			token = current_user.generate_email_change_token(new_email)
-			send_email(new_email, 'Confirm your email address',
-			            'auth/email/change_email',
-			            user=current_user, token=token)
+			send_email(new_email, 'Confirm your email address', 'auth/email/change_email', user=current_user, token=token)
 			flash('An email with instructions to confirm your new email address has been sent to you.')
 			return redirect(url_for('main.index'))
 		else:
@@ -181,11 +179,14 @@ def change_email_request():
 @auth.route('/change_email/<token>')
 @login_required
 def change_email(token):
-	print('token的布尔值=====',current_user.change_email(token))
+	print('token的布尔值=====', current_user.change_email(token))
 	if current_user.change_email(token):
+		print('第一处执行')
 		db.session.commit()
+		print('第二处执行')
 		flash('Your email address has been updated.')
 	else:
+		print('第三处执行')
 		flash('Invalid request.')
 	return redirect(url_for('main.index'))
 
