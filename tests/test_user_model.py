@@ -5,6 +5,7 @@
 import unittest
 from app.models import User
 
+
 class UserModelTestCase(unittest.TestCase):
 	def test_password_setter(self):
 		u = User(password='cat')
@@ -14,6 +15,7 @@ class UserModelTestCase(unittest.TestCase):
 		u = User(password='cat')
 		with self.assertRaises(AttributeError):
 			u.password
+
 	def test_password_verification(self):
 		u = User(password='cat')
 		self.assertTrue(u.verify_password('cat'))
@@ -23,3 +25,5 @@ class UserModelTestCase(unittest.TestCase):
 		u = User(password='cat')
 		u2 = User(password='cat')
 		self.assertTrue(u.password_hash != u2.password_hash)
+
+	# 角色和权限的单元测试

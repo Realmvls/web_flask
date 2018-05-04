@@ -11,11 +11,24 @@ from . import login_manager
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
+# 检查用户是否有指定权限
+from flask_login import UserMixin, AnonymousUserMixin
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+# 各个操作权限表
+
+
+class Permission:
+    FOLLOW = 1  # 关注
+    COMMENT = 2  # 在他人的文章中发表评论
+    WRITE = 4  # 写文章
+    MODERATE = 8  # 管理别人发表的评论
+    ADMIN = 16  # 管理员权限
+
 
 # roles表
 
@@ -24,12 +37,47 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
+    # 只有一个角色的default字段要设置为True, 其他都设为False.用户注册时其角色会被设置为默认角色
+    default = db.Clumn(db.Boolean, default=False, index=True)
+    # 表示位标志，各个操作都对应一个位位置，能执行某项操作的角色，其位值会被设为1
+    permissions = db.Column(db.Integer)
     # 关系
     user = db.relationship('User', backref='role', lazy='dynamic')
-#  __repr()__ 方法，返回一个具有可读性的字符串表示模型，可在调试和测试时使用。
+    # 以后要想添加新角色，或者修改角色的权限，只需要修改roles数组，再运行函数即可
+    # ps：‘匿名’角色不需要在数据库中表示出来，这个角色的作用就是为了表示不在数据库中的用户
 
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
+
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
+            'Moderator': [Permission.FOLLOW, Permission.COMMENT,
+                          Permission.WRITE, Permission.MODERATE],
+            'Administrator': [Permission.FOLLOW, Permission.COMMENT,
+                              Permission.WRITE, Permission.MODERATE,
+                              Permission.ADMIN]
+        }
+        default_role = 'User'
+        for r in roles:
+            role = Role.query.filter_by(name=r).first()
+            if role is None:
+                role = Role(name=r)
+            role.reset_permissions()
+            for perm in roles[r]:
+                role.add_permission(perm)
+            role.default = (role.name == default_role)
+            db.session.add(role)
+        db.session.commit()
+
+
+#  __repr()__ 方法，返回一个具有可读性的字符串表示模型，可在调试和测试时使用。
     def __repr__(self):
         return '<Role %r>' % self.name
+
 
 # user表
 
@@ -45,6 +93,15 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     # 注册时发的确认邮件是否被点击的字段
     confirmed = db.Column(db.Boolean, default=False)
+
+    # 定义默认用户角色,User 类的构造函数首先调用基类的构造函数，如果创建基类对象后还没定义角色，则根据电子邮件地址决定将其设为管理员还是默认角色。
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.role is None:
+            if self.email == current_app.config['FLASKY_ADMIN']:
+                self.role = Role.query.filter_by(permissions=0xff).first()
+            if self.role is None:
+                self.role = Role.query.filter_by(default=True).first()
 
     @property
     def password(self):
@@ -115,12 +172,32 @@ class User(UserMixin, db.Model):
         db.email = new_email
         db.session.add(self)
         return True
+    # 检查用户是否有指定的权限
+
+    def can(self, permissions):
+        return self.role is not None and (self.role.permissions & permissions) == permissions
+
+    def is_administrator(self):
+        return self.can(Permission.ADMINISTER)
 
     def __repr__(self):
         return '<User %r>' % self.username
 
+# 检查用户权限
 
+
+class AnonymousUser(AnonymousUserMixin):
+    def can(self, permissions):
+        return False
+
+    def is_administrator(self):
+        return False
+
+
+login_manager.anonymous_user = AnonymousUser
 # 这个函数目前还没有用到
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
