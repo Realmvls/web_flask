@@ -1,6 +1,7 @@
 #!/usr/bin/Python
 # -*- coding: utf-8 -*-
 from . import db
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -38,7 +39,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     # 只有一个角色的default字段要设置为True, 其他都设为False.用户注册时其角色会被设置为默认角色
-    default = db.Clumn(db.Boolean, default=False, index=True)
+    default = db.Column(db.Boolean, default=False, index=True)
     # 表示位标志，各个操作都对应一个位位置，能执行某项操作的角色，其位值会被设为1
     permissions = db.Column(db.Integer)
     # 关系
@@ -93,6 +94,20 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     # 注册时发的确认邮件是否被点击的字段
     confirmed = db.Column(db.Boolean, default=False)
+    # 用户资料
+    name = db.Column(db.String(64))
+    location = db.Column(db.String(64))
+    # 自我介绍
+    about_me = db.Column(db.Text())
+    # 注册日期
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    # 访问日期
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    # 刷新用户的最后访问时间的函数
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
     # 定义默认用户角色,User 类的构造函数首先调用基类的构造函数，如果创建基类对象后还没定义角色，则根据电子邮件地址决定将其设为管理员还是默认角色。
     def __init__(self, **kwargs):
@@ -178,7 +193,7 @@ class User(UserMixin, db.Model):
         return self.role is not None and (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
-        return self.can(Permission.ADMINISTER)
+        return self.can(Permission.ADMIN)
 
     def __repr__(self):
         return '<User %r>' % self.username

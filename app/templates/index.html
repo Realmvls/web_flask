@@ -1,19 +1,9 @@
-
 {% extends "base.html" %}
 
 {% block title %}Flasky{% endblock %}
+
 {% block page_content %}
 <div class="page-header">
-    <h5> Hello,
-    {% if current_user.is_authenticated %}
-        {{ current_user.username }}
-    {% else %}
-        Stranger!
-    {% endif %}
-    </h5>
+    <h4>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h4>
 </div>
-{% endblock %}
-
-{% block styles %}
-    <body background='../static/banner.jpg'>
 {% endblock %}
