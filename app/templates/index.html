@@ -2,8 +2,29 @@
 
 {% block title %}Flasky{% endblock %}
 
+
+
 {% block page_content %}
-<div class="page-header">
-    <h4>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h4>
+<div class="container">
+    <div class="row">
+    {% for movie in movies %}
+          <div class="col-sm-3 col-md-3">
+            <div class="thumbnail" style="height:450px;position:relative;">
+                <a href="{{ url_for('detail',movie_id=movie.id) }}">
+                    <img src="{{ movie.cover }}" style="height:200px;width: 100%;">
+                </a>
+              <div class="caption">
+                <h3 class="text-center">{{ movie.name }}</h3>
+                <p>{{ movie.profile|truncate(110) }}</p>
+                <p style="position:absolute;bottom:5px;right:10px;">
+                    <a href="{{ url_for('detail',movie_id=movie.id) }}" class="btn btn-warning btn-xs" role="button">查看更多>></a>
+                </p>
+              </div>
+            </div>
+          </div>
+    {% endfor %}
+</div>
 </div>
 {% endblock %}
+
+

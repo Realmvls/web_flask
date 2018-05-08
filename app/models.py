@@ -14,6 +14,10 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 # 检查用户是否有指定权限
 from flask_login import UserMixin, AnonymousUserMixin
+# 用户头像
+import hashlib
+from flask import request
+
 
 
 @login_manager.user_loader
@@ -103,11 +107,8 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     # 访问日期
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
-
-    # 刷新用户的最后访问时间的函数
-    def ping(self):
-        self.last_seen = datetime.utcnow()
-        db.session.add(self)
+    # 用户头像
+    avatar_hash = db.Column(db.String(32))
 
     # 定义默认用户角色,User 类的构造函数首先调用基类的构造函数，如果创建基类对象后还没定义角色，则根据电子邮件地址决定将其设为管理员还是默认角色。
     def __init__(self, **kwargs):
@@ -117,6 +118,13 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = self.gravatar_hash()
+
+    # 刷新用户的最后访问时间的函数
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
     @property
     def password(self):
@@ -184,7 +192,7 @@ class User(UserMixin, db.Model):
         if self.query.filter_by(email=new_email).first() is not None:
             return False
         self.email = new_email
-        db.email = new_email
+        self.avatar_hash = self.gravatar_hash()
         db.session.add(self)
         return True
     # 检查用户是否有指定的权限
@@ -197,6 +205,17 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+    # 用户头像
+    def gravatar_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+
+    def gravatar(self, size=50, default='identicon', rating='g'):
+        url = 'https://secure.gravatar.com/avatar'
+        hash = self.avatar_hash or self.gravatar_hash()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=hash, size=size, default=default, rating=rating)
+
 
 # 检查用户权限
 
