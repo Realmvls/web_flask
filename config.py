@@ -17,6 +17,10 @@ class Config:
 	# 发件人地址
 	FLASKY_MAIL_SENDER = '阿甲<942814208@163.com>'
 	FLASKY_ADMIN = FLASKY_ADMIN
+	FLASKY_COMMENTS_PER_PAGE = 30
+	FLASKY_POSTS_PER_PAGE = 20
+
+
 
 	@staticmethod
 	def init_app(app):

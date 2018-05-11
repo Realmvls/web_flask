@@ -30,7 +30,10 @@ def login():
 		# verify_password()函数验证密码是否正确
 		if user is not None and user.verify_password(form.password.data):
 			login_user(user, form.remember_me.data)
-			return redirect(request.args.get('next') or url_for('main.index'))
+			next = request.args.get('next')
+			if next is None or not next.startswith('/'):
+				next = url_for('main.search')
+			return redirect(next)
 		flash('Invalid username or password')
 	return render_template('auth/login.html', form=form)
 

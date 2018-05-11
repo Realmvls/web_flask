@@ -15,6 +15,19 @@ from ..models import Role, User
 # SubmitField为属性为type=submit的input元素
 # validators=[Required()] 这种写法已经不能用了
 
+# 搜索表单
+
+
+class SearchForm(FlaskForm):
+    search_key = StringField('job name or region~')
+    submit = SubmitField('search!')
+# 评论表单
+
+
+class CommentForm(FlaskForm):
+    body = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
 
 class NameForm(FlaskForm):
     name = StringField('What is your name?')

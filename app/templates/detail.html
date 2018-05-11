@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <style>
+    .job-table{
+        width: 800px;
+        margin: 0 auto;
+    }
+    </style>
+{% endblock %}
+
+
+{% block body %}
+    <table class="table table-bordered job-table job-table">
+        <caption><h3 style="color:#000;">{{ data_detail.job_name }}</h3></caption>
+        <tbody>
+            <tr>
+                <td>工资：{{ data_detail.salary }}</td>
+            </tr>
+            <tr>
+                <td>地点：{{ data_detail.location }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    简介：{{ data_detail.description }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><img src="{{ data_detail.enterprise_logo }}" alt="" style="width: 100%;"></td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="{{ url_for('.post', id=post.id) }}#comments">
+     <span class="label label-primary">{{ post.comments.count() }} Comments</span>
+    </a>
+{% endblock %}
