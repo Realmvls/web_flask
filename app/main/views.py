@@ -15,28 +15,20 @@ from flask_login import login_required, current_user
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data).first()
-        print('user====', user)
-        print(type(user))
-        if user is None:
-            print('不存在')
-            user = User(username=form.name.data)
-            flash('Looks like you have changed your name!!!')
-            db.session.add(user)
-            db.session.commit()
-            session['known'] = False
-            if current_app.config['FLASKY_ADMIN']:
-                send_email(current_app.config['FLASKY_ADMIN'], '新用户', 'mail/new_user', user=user)
-        else:
-            print('存在')
-            session['known'] = True
-        session['name'] = form.name.data
-        form.name.data = ''
-        return redirect(url_for('.index'))
-    return render_template('index.html', form=form, name=session.get('name'),
-                           known=session.get('known', False), current_time=datetime.utcnow())
+    enterprises = [{'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"}, {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"},
+                   {'name': "阿里", 'profile': "互联网"}]
+
+    return render_template('index.html', enterprises=enterprises)
+
 
 # 资料页面路由
 
