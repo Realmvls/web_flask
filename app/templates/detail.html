@@ -30,7 +30,9 @@
             </tr>
         </tbody>
     </table>
-    <a href="{{ url_for('.post', id=post.id) }}#comments">
-     <span class="label label-primary">{{ post.comments.count() }} Comments</span>
-    </a>
+      <div>
+        <a href="{{ url_for('main.post',id=post.id) }}">comment
+        </a>
+      </div>
+
 {% endblock %}

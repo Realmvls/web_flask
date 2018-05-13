@@ -27,6 +27,8 @@ def index():
                    {'name': "阿里", 'profile': "互联网"},
                    {'name': "阿里", 'profile': "互联网"},
                    {'name': "阿里", 'profile': "互联网"}]
+    print('11111111111111111111111111111111111')
+    print(current_user.is_authenticated)
 
     return render_template('index.html', enterprises=enterprises)
 

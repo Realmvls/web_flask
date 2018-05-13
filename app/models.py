@@ -112,8 +112,9 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     # 用户头像
     avatar_hash = db.Column(db.String(32))
-
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
     # 定义默认用户角色,User 类的构造函数首先调用基类的构造函数，如果创建基类对象后还没定义角色，则根据电子邮件地址决定将其设为管理员还是默认角色。
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
