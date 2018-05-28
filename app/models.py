@@ -281,10 +281,15 @@ class Comment(db.Model):
          markdown(value, output_format='html'),
          tags=allowed_tags, strip=True))
 
+    @staticmethod
+    def get_comments(post_id):
+        return Comment.query.filter_by(post_id=post_id).all()
+
+    def __init__ (self, body, author_id, post_id):
+        self.body = body
+        self.body_html = body
+        self.disabled = True
+        self.author_id = author_id
+        self.post_id = post_id
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
-
-
-
-
-

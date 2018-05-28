@@ -66,14 +66,25 @@ def search():
 # 招聘信息细节页面
 
 
-@main.route('/detail<job_id>')
+@main.route('/detail<job_id>', methods = ('GET', 'POST'))
 @login_required
 def detail(job_id):
+    form = CommentForm()
+
+    if form.validate_on_submit():
+        body = form.data['body']
+        c = Comment(body, current_user.id, 1)
+        db.session.add(c)
+        db.session.commit()
+        return redirect(url_for('main.detail', job_id = job_id))
+
     data_detail = {'job_name': '大数据分析师','salary':10000-50000, 'location': '北京',
                    'description': '啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦',
                    'enterprise_logo':'http://company.zhaopin.com/CompanyLogo/20170122/D4DDF1ECC5F85A05ED1BC9B6D5334EC7.gif'}
     flash('根据job_id写sql，return到templates/html中')
-    return render_template('detail.html', data_detail=data_detail)
+
+    comments = Comment.get_comments(1)
+    return render_template('detail.html', data_detail=data_detail, form = form, comments = comments)
 # 资料页面编辑
 
 
@@ -168,6 +179,3 @@ def post(id):
 #         # form.name.data=''
 #         # print(form.name)
 #     return render_template('index.html', form=form, name=session.get('name'), current_time=datetime.utcnow())
-
-
-

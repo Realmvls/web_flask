@@ -6,6 +6,31 @@
         width: 800px;
         margin: 0 auto;
     }
+
+    .comments {
+      width: 800px;
+      margin:0 auto;
+    }
+
+    .comment {
+      margin-bottom: 12px;
+      border-bottom: 1px solid #ccc;
+      min-height: 120px;
+    }
+
+    .content {
+        height: 80px;
+        display: inline-block;
+
+    }
+
+    .timestep {
+      height: 24px;
+      font-size: 12px;
+      width: 100%;
+      text-align: right;
+    }
+
     </style>
 {% endblock %}
 
@@ -30,9 +55,31 @@
             </tr>
         </tbody>
     </table>
-      <div>
-        <a href="{{ url_for('main.post',id=posts )}}">comment
-        </a>
+
+    <table class="table table-bordered job-table job-table">
+      <caption><h3 style="color:#000;">发布讨论</h3></caption>
+      <tbody>
+          <form method="post">
+            {{form.hidden_tag()}}
+          <tr>
+              <td>{{form.body(cols=120, rows=10)}}</td>
+          </tr>
+          <tr>
+              <td>{{form.submit()}}</td>
+          </tr>
+        </form>
+      </tbody>
+    </table>
+
+      <div class="comments">
+        {% for c in comments %}
+        <div class="comment">
+            <h4>{{c.author.username}}</h4>
+            <div class="content">{{c.body | safe}}</div>
+            <div class="timestep">{{c.timestamp}}</div>
+        </div>
+
+        {% endfor %}
       </div>
 
 {% endblock %}
