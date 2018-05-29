@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5db0aadb-78c3-43da-b089-02abe9bf31f1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/uwsgiconfig.ini" afterPath="$PROJECT_DIR$/uwsgiconfig.ini" />
     </list>
     <ignored path="flask1.22.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -68,8 +68,8 @@
       <file leaf-file-name="uwsgiconfig.ini" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/uwsgiconfig.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+            <state relative-caret-position="406">
+              <caret line="14" column="22" lean-forward="true" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -200,7 +200,6 @@
         <option value="$PROJECT_DIR$/app/templates/auth/email/confirm.txt" />
         <option value="$PROJECT_DIR$/app/templates/auth/email/confirm.html" />
         <option value="$PROJECT_DIR$/uwsgiconfig.ini.py" />
-        <option value="$PROJECT_DIR$/uwsgiconfig.ini" />
         <option value="$PROJECT_DIR$/readme.txt" />
         <option value="$PROJECT_DIR$/app/__init__.py" />
         <option value="$PROJECT_DIR$/app/templates/auth/change_password.html" />
@@ -234,6 +233,7 @@
         <option value="$PROJECT_DIR$/savedata.py" />
         <option value="$PROJECT_DIR$/1111111111111111111111111.py" />
         <option value="$PROJECT_DIR$/zhilian_spider.py" />
+        <option value="$PROJECT_DIR$/uwsgiconfig.ini" />
       </list>
     </option>
   </component>
@@ -486,7 +486,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14164905" sideWeight="0.4923077" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32756633" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -921,8 +920,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/uwsgiconfig.ini">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+        <state relative-caret-position="406">
+          <caret line="14" column="22" lean-forward="true" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
           <folding />
         </state>
       </provider>
